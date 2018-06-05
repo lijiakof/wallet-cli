@@ -1,0 +1,25 @@
+{
+    "name": "wallet-cli",
+    "version": "0.1.0",
+    "description": "Wallet CLI base on trip-wallet",
+    "authors": [
+        {
+            "name": "Jay",
+            "email": "lijiakof@gmail.com",
+            "url": "https://github.com/lijiakof/"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lijiakof/wallet-cli.git"
+    },
+    "keywords": [
+        "blockchain",
+        "eth",
+        "btc",
+        "trip",
+        "tripio",
+        "trio",
+        "wallet"
+    ]
+}
