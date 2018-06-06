@@ -1,6 +1,6 @@
 {
     "name": "wallet-cli",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Wallet CLI base on trip-wallet",
     "authors": [
         {
@@ -25,6 +25,9 @@
     "bin": {
         "wallet": "./bin/wallet.js"
     },
+    "files": [
+        "bin"
+    ],
     "dependencies": {
         "chalk": "^2.4.1",
         "commander": "^2.15.1",

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const program = require('commander');
+const chalk = require('chalk');
 var Wallet = require('trip-wallet');
 
 var wallet = Wallet();
@@ -10,6 +11,9 @@ var address = '0xb02d5da39628918daa9545388f1abb60be368e0a';
 var provider = 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57'
 
 wallet.setProvider(provider);
+
+program
+    .version('0.1.0', '-v, --version')
 
 program
     .command('generate')
@@ -107,3 +111,5 @@ program
     });
 
 program.parse(process.argv);
+
+if (!program.args.length) program.help();
