@@ -1,6 +1,6 @@
 {
     "name": "wallet-cli",
-    "version": "0.1.1",
+    "version": "0.1.3",
     "description": "Wallet CLI base on trip-wallet",
     "authors": [
         {
