@@ -21,5 +21,14 @@
         "tripio",
         "trio",
         "wallet"
-    ]
+    ],
+    "bin": {
+        "wallet": "./bin/wallet.js"
+    },
+    "dependencies": {
+        "chalk": "^2.4.1",
+        "commander": "^2.15.1",
+        "inquirer": "^6.0.0",
+        "trip-wallet": "^0.1.3"
+    }
 }
