@@ -2,6 +2,7 @@
 
 const program = require('commander');
 const chalk = require('chalk');
+const pkg = require('../package.json');;
 var Wallet = require('trip-wallet');
 
 var wallet = Wallet();
@@ -14,8 +15,9 @@ var provider = 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57';
 
 wallet.setProvider(provider);
 
+// TODO: ver from package
 program
-    .version('0.1.0', '-v, --version')
+    .version(pkg.version, '-v, --version')
 
 // reate wallet
 program
@@ -61,8 +63,10 @@ program
         }
 
         console.log('loading..');
-        wallet.getTokenBalance(addr, '0x8b40761142b9aa6dc8964e61d0585995425c3d94').then(function (res, err) {
+        wallet.getTokenBalance(addr, '0x8b40761142b9aa6dc8964e61d0585995425c3d94').then((res) => {
             console.log('address: %s trip balance: %s', addr, res)
+        }).catch((err) => {
+            console.log(err);
         });
 
     });
@@ -79,8 +83,10 @@ program
         }
 
         console.log('loading..');
-        wallet.getTokenBalance(addr, tokenAddress).then(function (res, err) {
+        wallet.getTokenBalance(addr, tokenAddress).then((res) => {
             console.log('address: %s token balance: %s', addr, res)
+        }).catch((err) => {
+            console.log(err);
         });
 
     });
@@ -94,8 +100,10 @@ program
         let addr = options.address ? options.address : address;
 
         console.log('loading..');
-        wallet.getBalance(addr).then(function (res, err) {
+        wallet.getBalance(addr).then((res) => {
             console.log('address: %s balance: %s', addr, res)
+        }).catch((err) => {
+            console.log(err);
         });
 
     });
@@ -103,19 +111,20 @@ program
 // get a transaction of transaction hash
 program
     .command('getTransaction <transactionHash>')
-    .alias('t')
+    .alias('tx')
     .action(function (transactionHash) {
         console.log('loading..');
-        wallet.getTransaction(transactionHash).then(function (res, err) {
+        wallet.getTransaction(transactionHash).then((res) => {
             console.log(res);
+        }).catch((err) => {
+            console.log(err);
         });
-
     });
 
 // send a transaction to the network
 program
     .command('sendTransaction')
-    .alias('s')
+    .alias('send')
     .action(function () {
         console.log('sorry! this function is not complete');
     });

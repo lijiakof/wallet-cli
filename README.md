@@ -4,17 +4,19 @@
 
 ```
 $ npm install -g wallet-cli
+OR
+$ yarn global add wallet-cli
 ```
 
 ## Update
 
 ```
+$ yarn global upgrade wallet-cli
 ```
 
 ## Usage
 
 ```
-$ wallet -v
 $ wallet -h
 ```
 
