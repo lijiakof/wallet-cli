@@ -17,8 +17,9 @@ wallet.setProvider(provider);
 program
     .version('0.1.0', '-v, --version')
 
+// reate wallet
 program
-    .command('generate', 'create wallet')
+    .command('generate')
     .alias('g')
     .action(function () {
         wallet.generate();
@@ -28,8 +29,9 @@ program
         console.log('address: %s', wallet.address);
     });
 
+// create a wallet based on a raw private key
 program
-    .command('import <privateKey>', 'create a wallet based on a raw private key')
+    .command('import <privateKey>')
     .alias('i')
     .action(function (privateKey) {
         wallet.import(privateKey);
@@ -43,13 +45,13 @@ program
     .command('setProvider <host>')
     .action(function (host) {
         wallet.setProvider(host);
-        
+
         console.log('set provider success');
     });
 
 program
     .command('getTrioBalance')
-    .option('-a, --address <address>', 'wallet address')
+    .option('-a, --address <address>', 'Wallet address')
     .action(function (options) {
         let addr = options.address ? options.address : address;
 
@@ -83,22 +85,24 @@ program
 
     });
 
+// get the balance of an address
 program
-    .command('getBalance', 'get the balance of an address')
+    .command('getBalance')
     .alias('b')
-    .option('-a, --address <address>', 'Wallet address')
+    .option('-a, --address <address>', 'wallet address')
     .action(function (options) {
         let addr = options.address ? options.address : address;
-        
+
         console.log('loading..');
-        wallet.getBalance(addr).then(function(res, err) {
+        wallet.getBalance(addr).then(function (res, err) {
             console.log('address: %s balance: %s', addr, res)
         });
-        
+
     });
 
+// get a transaction of transaction hash
 program
-    .command('getTransaction <transactionHash>', 'get a transaction of transaction hash')
+    .command('getTransaction <transactionHash>')
     .alias('t')
     .action(function (transactionHash) {
         console.log('loading..');
@@ -108,8 +112,9 @@ program
 
     });
 
+// send a transaction to the network
 program
-    .command('sendTransaction', 'send a transaction to the network')
+    .command('sendTransaction')
     .alias('s')
     .action(function () {
         console.log('sorry! this function is not complete');
