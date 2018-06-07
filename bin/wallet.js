@@ -1,23 +1,37 @@
 #!/usr/bin/env node
 
+process.env["NODE_CONFIG_DIR"] = __dirname + "/config/";
+const config = require('config');
 const program = require('commander');
+const inquirer = require('inquirer');
 const chalk = require('chalk');
-const pkg = require('../package.json');;
+const pkg = require('../package.json');
 var Wallet = require('trip-wallet');
 
 var wallet = Wallet();
 //var address = '0x3228f93390612218a7d55503a3bdd46c4fbd1fd3'
 var address = '0xb02d5da39628918daa9545388f1abb60be368e0a';
 // var provider = 'http://192.168.1.41:8545';
-var provider = 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57';
+//var provider = 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57';
+var provider = 'https://rinkeby.infura.io';
 
 // TODO: let address & provider config
 
 wallet.setProvider(provider);
 
-// TODO: ver from package
 program
     .version(pkg.version, '-v, --version')
+
+// get config
+program
+    .command('config')
+    .action(() => {
+        console.log(config);
+        // var dbConfig = config.get('Customer.dbConfig');
+        // console.log(dbConfig);
+        //var cfg = config.get('wallet');
+        //console.log(cfg.get('wallet.'));
+    });
 
 // reate wallet
 program
@@ -47,13 +61,41 @@ program
     .command('setProvider <host>')
     .action(function (host) {
         wallet.setProvider(host);
+        // set config
 
         console.log('set provider success');
     });
 
 program
+    .command('switchProvider')
+    .action(() => {
+        inquirer.prompt([{
+            type: 'list',
+            name: 'network',
+            message: 'please select network',
+            choices: [{ 
+                name: 'Main',
+                value: 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57'
+            }, {
+                name: 'Rinkeby Test',
+                value: 'https://rinkeby.infura.io'
+            }, {
+                name: 'Test',
+                value: 'http://192.168.1.41:8545'
+            }, { 
+                name: 'Localhost',
+                value: 'http://localhost:8545'
+            }]
+        }]).then(answers => {
+            wallet.setProvider(answers.network);
+            // set config
+            console.log('current network: %s', answers.network);
+        });
+    });
+
+program
     .command('getTrioBalance')
-    .option('-a, --address <address>', 'Wallet address')
+    .option('-a, --address <address>', 'wallet address')
     .action(function (options) {
         let addr = options.address ? options.address : address;
 
@@ -62,7 +104,7 @@ program
             return;
         }
 
-        console.log('loading..');
+        console.log('waiting...');
         wallet.getTokenBalance(addr, '0x8b40761142b9aa6dc8964e61d0585995425c3d94').then((res) => {
             console.log('address: %s trip balance: %s', addr, res)
         }).catch((err) => {
@@ -73,7 +115,7 @@ program
 
 program
     .command('getTokenBalance <tokenAddress>')
-    .option('-a, --address <address>', 'Wallet address')
+    .option('-a, --address <address>', 'wallet address')
     .action(function (tokenAddress, options) {
         let addr = options.address ? options.address : address;
 
@@ -82,7 +124,7 @@ program
             return;
         }
 
-        console.log('loading..');
+        console.log('waiting...');
         wallet.getTokenBalance(addr, tokenAddress).then((res) => {
             console.log('address: %s token balance: %s', addr, res)
         }).catch((err) => {
@@ -99,7 +141,7 @@ program
     .action(function (options) {
         let addr = options.address ? options.address : address;
 
-        console.log('loading..');
+        console.log('waiting...');
         wallet.getBalance(addr).then((res) => {
             console.log('address: %s balance: %s', addr, res)
         }).catch((err) => {
@@ -113,7 +155,7 @@ program
     .command('getTransaction <transactionHash>')
     .alias('tx')
     .action(function (transactionHash) {
-        console.log('loading..');
+        console.log('waiting...');
         wallet.getTransaction(transactionHash).then((res) => {
             console.log(res);
         }).catch((err) => {
@@ -126,6 +168,7 @@ program
     .command('sendTransaction')
     .alias('send')
     .action(function () {
+        console.log('sending...');
         console.log('sorry! this function is not complete');
     });
 

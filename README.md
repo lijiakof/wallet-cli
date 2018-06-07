@@ -11,6 +11,8 @@ $ yarn global add wallet-cli
 ## Update
 
 ```
+$ npm update -g wallet-cli
+OR
 $ yarn global upgrade wallet-cli
 ```
 
