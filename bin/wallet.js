@@ -1,43 +1,56 @@
 #!/usr/bin/env node
 
-process.env["NODE_CONFIG_DIR"] = __dirname + "/config/";
-const config = require('config');
+const Config = require('configstore');
 const program = require('commander');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 const pkg = require('../package.json');
 var Wallet = require('trip-wallet');
 
+var config = new Config(pkg.name, {
+    address: '',
+    provider: 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57'
+});
+
 var wallet = Wallet();
 //var address = '0x3228f93390612218a7d55503a3bdd46c4fbd1fd3'
-var address = '0xb02d5da39628918daa9545388f1abb60be368e0a';
-// var provider = 'http://192.168.1.41:8545';
-//var provider = 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57';
-var provider = 'https://rinkeby.infura.io';
+//var address = '0xb02d5da39628918daa9545388f1abb60be368e0a';
 
-// TODO: let address & provider config
-
-wallet.setProvider(provider);
+wallet.setProvider(config.get('provider'));
 
 program
     .version(pkg.version, '-v, --version')
+    .command('install [name]', 'install one or more packages').alias('i')
 
-// get config
 program
-    .command('config')
-    .action(() => {
-        console.log(config);
-        // var dbConfig = config.get('Customer.dbConfig');
-        // console.log(dbConfig);
-        //var cfg = config.get('wallet');
-        //console.log(cfg.get('wallet.'));
+    .command('config [key] [value]')
+    .description('configuration')
+    .option('-l, --list')
+    .action((key, value) => {
+        
+        if (key && !value) {
+            console.log(config.get(key))
+        }
+        else if(key && value) {
+            if (key == 'address' || key == 'provider') {
+                config.set(key, value);
+                console.log(config.get(key))
+            }
+            else {
+                console.log('this configuration is not supported');
+            }
+        }
+        else {
+            console.log('provider: %s', config.get('provider'));
+            console.log('address: %s', config.get('address'));
+        }
     });
 
-// reate wallet
 program
     .command('generate')
     .alias('g')
-    .action(function () {
+    .description('reate wallet')
+    .action(() => {
         wallet.generate();
 
         console.log('privateKey: %s', wallet.privateKey);
@@ -45,11 +58,11 @@ program
         console.log('address: %s', wallet.address);
     });
 
-// create a wallet based on a raw private key
 program
     .command('import <privateKey>')
     .alias('i')
-    .action(function (privateKey) {
+    .description('create a wallet based on a raw private key')
+    .action((privateKey) => {
         wallet.import(privateKey);
 
         console.log('privateKey: %s', wallet.privateKey);
@@ -59,10 +72,10 @@ program
 
 program
     .command('setProvider <host>')
-    .action(function (host) {
+    .action((host) => {
         wallet.setProvider(host);
         // set config
-
+        config.set('provider', host);
         console.log('set provider success');
     });
 
@@ -89,6 +102,7 @@ program
         }]).then(answers => {
             wallet.setProvider(answers.network);
             // set config
+            config.set('provider', answers.network);
             console.log('current network: %s', answers.network);
         });
     });
@@ -116,12 +130,11 @@ program
 program
     .command('getTokenBalance <tokenAddress>')
     .option('-a, --address <address>', 'wallet address')
-    .action(function (tokenAddress, options) {
-        let addr = options.address ? options.address : address;
+    .action((tokenAddress, options) => {
+        let addr = options.address ? options.address : config.get('address');
 
         if (!addr) {
-            console.log('please set your wallet address');
-            return;
+            return console.log('please set your wallet address');
         }
 
         console.log('waiting...');
@@ -133,13 +146,17 @@ program
 
     });
 
-// get the balance of an address
 program
     .command('getBalance')
     .alias('b')
+    .description('get the balance of an address')
     .option('-a, --address <address>', 'wallet address')
-    .action(function (options) {
-        let addr = options.address ? options.address : address;
+    .action((options) => {
+        let addr = options.address ? options.address : config.get('address');
+
+        if (!addr) {
+            return console.log('please set your wallet address');
+        }
 
         console.log('waiting...');
         wallet.getBalance(addr).then((res) => {
@@ -150,11 +167,11 @@ program
 
     });
 
-// get a transaction of transaction hash
 program
     .command('getTransaction <transactionHash>')
     .alias('tx')
-    .action(function (transactionHash) {
+    .description('get a transaction of transaction hash')
+    .action((transactionHash) => {
         console.log('waiting...');
         wallet.getTransaction(transactionHash).then((res) => {
             console.log(res);
@@ -167,7 +184,7 @@ program
 program
     .command('sendTransaction')
     .alias('send')
-    .action(function () {
+    .action(() => {
         console.log('sending...');
         console.log('sorry! this function is not complete');
     });
