@@ -9,28 +9,37 @@ var Wallet = require('trip-wallet');
 
 var config = new Config(pkg.name, {
     address: '',
+    timeout: 30000,
     provider: 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57'
 });
 
 var wallet = Wallet();
-//var address = '0x3228f93390612218a7d55503a3bdd46c4fbd1fd3'
-//var address = '0xb02d5da39628918daa9545388f1abb60be368e0a';
+//test address: '0x3228f93390612218a7d55503a3bdd46c4fbd1fd3'
+//jay address: '0xb02d5da39628918daa9545388f1abb60be368e0a'
+
+// TODO: 
+var providers = {
+    'Main': 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57',
+    'Rinkeby Test': 'https://rinkeby.infura.io',
+    'Test': 'http://192.168.1.41:8545',
+    'Localhost': 'http://localhost:8545'
+};
 
 wallet.setProvider(config.get('provider'));
 
 program
-    .version(pkg.version, '-v, --version')
-    .command('install [name]', 'install one or more packages').alias('i')
+    .version(pkg.version, '-v, --version');
 
 program
     .command('config [key] [value]')
-    .description('configuration')
+    .description('wallet configuration')
     .option('-l, --list')
     .action((key, value) => {
         
         if (key && !value) {
             console.log(config.get(key))
         }
+        // TODO: verify key: address
         else if(key && value) {
             if (key == 'address' || key == 'provider') {
                 config.set(key, value);
@@ -41,9 +50,16 @@ program
             }
         }
         else {
-            console.log('provider: %s', config.get('provider'));
-            console.log('address: %s', config.get('address'));
+            console.log('provider=%s', config.get('provider'));
+            console.log('address=%s', config.get('address'));
         }
+    });
+
+program
+    .command('init')
+    .description('initialize wallet')
+    .action(() => {
+        
     });
 
 program
@@ -72,10 +88,11 @@ program
 
 program
     .command('setProvider <host>')
+    .description('set provider')
     .action((host) => {
         wallet.setProvider(host);
-        // set config
         config.set('provider', host);
+
         console.log('set provider success');
     });
 
@@ -101,8 +118,8 @@ program
             }]
         }]).then(answers => {
             wallet.setProvider(answers.network);
-            // set config
             config.set('provider', answers.network);
+            
             console.log('current network: %s', answers.network);
         });
     });
@@ -110,7 +127,7 @@ program
 program
     .command('getTrioBalance')
     .option('-a, --address <address>', 'wallet address')
-    .action(function (options) {
+    .action((options) => {
         let addr = options.address ? options.address : address;
 
         if (!addr) {
@@ -185,8 +202,46 @@ program
     .command('sendTransaction')
     .alias('send')
     .action(() => {
-        console.log('sending...');
-        console.log('sorry! this function is not complete');
+        // {
+        //     type: 'confirm',
+        //         name: 'xx',
+        //             message: console.log('current address: %s', config.get('address'))
+        // }, 
+        inquirer.prompt([{
+            type: 'input',
+            name: 'to',
+            message: 'transfer to ?'
+        }, {
+            type: 'number',
+            name: 'value',
+            message: 'input value ?'
+        }, {
+            type: 'number',
+            name: 'gas',
+            default: 1000000000,
+            message: 'input gas ?'
+        }, {
+            type: 'input',
+            name: 'privateKey',
+            message: 'input your privateKey ?'
+        }]).then(answers => {
+            console.log(answers);
+            let tx = {
+                from: config.get('address'),
+                to: answers.to,
+                value: answers.value,
+                gasLimit: 22000,
+                gasPrice: answers.gas,
+                privateKey: answers.privateKey
+            };
+
+            console.log('sending...');
+            wallet.sendTransaction(tx).then((res) => {
+                console.log(res);
+            }).catch((err) => {
+                console.log(err);
+            });
+        });
     });
 
 program.parse(process.argv);
