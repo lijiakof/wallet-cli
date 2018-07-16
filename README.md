@@ -23,3 +23,9 @@ $ wallet -h
 ```
 
 Enjoy it!
+
+## Dev
+
+```
+$ node ./bin/wallet.js -h 
+```

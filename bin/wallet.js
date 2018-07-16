@@ -13,7 +13,8 @@ var config = new Config(pkg.name, {
     provider: 'https://mainnet.infura.io/9WfBzi6QFGrAWBYZKq57'
 });
 
-var wallet = Wallet();
+var wallet = Wallet.default();
+var util = Wallet.EthUtil;
 //test address: '0x3228f93390612218a7d55503a3bdd46c4fbd1fd3'
 //jay address: '0xb02d5da39628918daa9545388f1abb60be368e0a'
 
@@ -196,6 +197,35 @@ program
             console.log(err);
         });
     });
+
+program
+    .command('gasPrice')
+    .description('get gas price')
+    .action(() => {
+        console.log('waiting...');
+        wallet.gasPrice().then((res) => {
+            console.log(res);
+        }).catch(err => {
+            console.log(err);
+        })
+    });
+
+program
+    .command('toHex <any>')
+    .description('convert to hex string')
+    .action((any) => {
+        let hex = util.toHex(any);
+        console.log(hex);
+    });
+
+program
+    .command('fromHex <hexString>')
+    .description('convert hex string to string')
+    .action((hexString) => {
+        var val = new Buffer(hexString, 'hex').toString('utf8');
+
+        console.log(val);
+    })
 
 // send a transaction to the network
 program

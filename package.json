@@ -35,6 +35,6 @@
         "configstore": "^3.1.2",
         "inquirer": "^6.0.0",
         "log-update": "^2.3.0",
-        "trip-wallet": "^0.1.5"
+        "trip-wallet": "^0.1.11"
     }
 }
